@@ -1,0 +1,90 @@
+/* ===== SIDEBAR ===== */
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  padding: 30px 20px;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  background: rgba(255,255,255,0.65);
+
+  border-right: 1px solid rgba(255,255,255,0.4);
+
+  box-shadow: 5px 0 30px rgba(0,0,0,0.05);
+}
+
+/* ===== LOGO ===== */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 22px;
+  font-weight: 600;
+
+  color: #2b7fff;
+
+  margin-bottom: 40px;
+}
+
+.logo svg {
+  font-size: 24px;
+}
+
+/* ===== NAV ===== */
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ===== LINKS ===== */
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 14px;
+
+  border-radius: 10px;
+
+  text-decoration: none;
+
+  color: #2d3e5e;
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: all 0.25s ease;
+}
+
+.link svg {
+  font-size: 16px;
+}
+
+/* ===== HOVER ===== */
+
+.link:hover {
+  background: rgba(43,127,255,0.1);
+  color: #2b7fff;
+}
+
+/* ===== ACTIVE LINK ===== */
+
+.active {
+  background: linear-gradient(135deg,#2b7fff,#5aa2ff);
+  color: white;
+}
+
+.active svg {
+  color: white;
+}

@@ -1,0 +1,184 @@
+/* ===== PAGE WRAPPER ===== */
+
+.wrapper {
+  min-height: 100vh;
+  padding: 40px;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(43,127,255,0.1), transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(43,127,255,0.08), transparent 40%),
+    linear-gradient(135deg, #eaf4ff, #f8fbff);
+  font-family: "Inter", sans-serif;
+}
+
+/* ===== HEADER SECTION ===== */
+
+.topSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.pageTitle {
+  font-size: 30px;
+  font-weight: 600;
+  color: #1b3c74;
+}
+
+.pageSubtitle {
+  font-size: 14px;
+  color: #5c7ba5;
+  margin-top: 4px;
+}
+
+/* ===== ADD BUTTON ===== */
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #2b7fff, #5aa2ff);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.addBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(43,127,255,0.3);
+}
+
+/* ===== GLASS CARD ===== */
+
+.card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.65);
+  border-radius: 18px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.05);
+}
+
+/* ===== CARD HEADER ===== */
+
+.cardHeader {
+  margin-bottom: 20px;
+}
+
+.cardHeader h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1b3c74;
+}
+
+.cardHeader p {
+  font-size: 13px;
+  color: #6b87ad;
+  margin-top: 3px;
+}
+
+/* ===== TABLE ===== */
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: rgba(43,127,255,0.08);
+}
+
+.table th {
+  text-align: left;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2a4f88;
+}
+
+.table td {
+  padding: 16px 14px;
+  font-size: 14px;
+  color: #2d3e5e;
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+
+/* ===== ROW HOVER ===== */
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(43,127,255,0.05);
+}
+
+/* ===== NAME CELL ===== */
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===== ICON BOX ===== */
+
+.iconBox {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#2b7fff,#7ab5ff);
+  color: white;
+}
+
+/* ===== BADGE ===== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(43,127,255,0.1);
+  color: #2b7fff;
+}
+
+/* ===== DELETE BUTTON ===== */
+
+.deleteBtn {
+  border: none;
+  background: rgba(255,80,80,0.1);
+  color: #ff4d4d;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteBtn:hover {
+  background: rgba(255,80,80,0.2);
+}
+
+/* ===== LOADING ===== */
+
+.loading {
+  text-align: center;
+  padding: 30px;
+  font-size: 15px;
+  color: #5c7ba5;
+}
