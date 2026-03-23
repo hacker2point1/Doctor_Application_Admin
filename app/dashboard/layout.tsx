@@ -1,11 +1,11 @@
-// 
 
+//use client
 import React from 'react';
 import { Box } from '@mui/material';
 import SidebarNavigation from '@/components/sidebarNavigation/sidebarNavigation';
 
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   // These widths should match exactly what you have in SidebarNavigation
   const EXPANDED_WIDTH = 280;
   const COLLAPSED_WIDTH = 88;

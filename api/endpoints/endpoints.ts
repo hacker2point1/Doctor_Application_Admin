@@ -1,30 +1,31 @@
 export const endpoints = {
-    admin:{
-        login : "/admin/auth/login"
+    admin: {
+        login: "/admin/auth/login"
     },
-    department:{
-        createDeptId :"/admin/doctor/department",
-        createDoctor : "/admin/doctor/create",
-        departmentList:"/admin/departments/list",
-        deleteDepartment:"/admin/department/delete"
+    department: {
+        createDeptId: "/admin/doctor/department",
+        createDoctor: "/admin/doctor/create",
+        departmentList: "/admin/departments/list",
+        deleteDepartment: "/admin/department/delete"
     },
-    doctor:{
-        doctorList:"/admin/doctor/list",
-        deleteDoctor:"/admin/doctor/delete",
-        updateDoctor:"/admin/doctor/update",
-        
+    doctor: {
+        doctorList: "/admin/doctor/list",
+        deleteDoctor: "/admin/doctor/delete",
+        updateDoctor: "/admin/doctor/update",
+
     },
-    logout:{
-        adminLogout:"/admin/logout"
+    logout: {
+        adminLogout: "/admin/logout"
     },
-    appoinment:{
-        listOfAppoinments:"/admin/doctor/appointment/list",
-        confirm:"/admin/doctor/appointment",
-        cancel:"/admin/doctor/appointment/cancelld"
-    }
+    appoinment: {
+        listOfAppoinments: "/admin/doctor/appointment/list",
+        confirmById: (id: string) => `/admin/doctor/appointment/${id}`,
+        cancelById: (id: string) => `/admin/doctor/appointment/cancelld/${id}`,
+        acceptedAppoinments:"/admin/appointment/acceptedlist",
+     }
 
 }
-export const endpoint =[
+export const endpoint = [
     //admin auth
     endpoints.admin.login,
 
@@ -38,8 +39,10 @@ export const endpoint =[
     endpoints.department.deleteDepartment,
     endpoints.doctor.updateDoctor,
     endpoints.appoinment.listOfAppoinments,
-    endpoints.appoinment.confirm,
-    endpoints.appoinment.cancel
+    endpoints.appoinment.confirmById,
+    endpoints.appoinment.cancelById,
+    endpoints.appoinment.acceptedAppoinments
+
 ]
 
 

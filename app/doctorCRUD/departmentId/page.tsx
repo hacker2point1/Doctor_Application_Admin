@@ -14,6 +14,7 @@ import {
   Card,
   InputAdornment,
   IconButton,
+  useTheme
 } from "@mui/material";
 
 import { LoadingButton } from "@mui/lab";
@@ -21,7 +22,7 @@ import { LoadingButton } from "@mui/lab";
 import {
   CorporateFare,
   EditNote,
-  Close,
+  Close
 } from "@mui/icons-material";
 
 import {
@@ -47,8 +48,18 @@ interface Props {
 }
 
 const DepartmentFormModal = ({ onClose }: Props) => {
+
   const dispatch = useDispatch<any>();
-  const { loading } = useSelector((state: RootState) => state.department);
+  const theme = useTheme();
+
+  const accentColor =
+    theme.palette.mode === "light"
+      ? "#00A76F"
+      : "#5B8CFF";
+
+  const { loading } = useSelector(
+    (state: RootState) => state.department
+  );
 
   const {
     register,
@@ -59,13 +70,13 @@ const DepartmentFormModal = ({ onClose }: Props) => {
   });
 
   const onSubmit = async (data: any) => {
+
     try {
+
       await dispatch(addDepartment(data)).unwrap();
 
-      // refresh department list
       dispatch(getDepartmentList({}));
 
-      // close modal
       if (onClose) {
         onClose();
       }
@@ -73,30 +84,31 @@ const DepartmentFormModal = ({ onClose }: Props) => {
     } catch (error) {
       console.log(error);
     }
+
   };
 
   return (
+
     <Card
       sx={{
         width: "100%",
-        maxWidth: "none",
-        mx: 0,
         borderRadius: "20px",
         p: 4,
-        background: "rgba(255,255,255,0.85)",
-        backdropFilter: "blur(20px)",
-        border: "1px solid rgba(145,158,171,0.2)",
-        boxShadow: "0 12px 24px rgba(0,0,0,0.08)",
-        boxSizing: "border-box",
+        bgcolor: theme.palette.background.paper,
+        border: `1px solid ${theme.palette.divider}`,
+        boxShadow: theme.shadows[6],
       }}
     >
+
       {/* Header */}
+
       <Stack
         direction="row"
         alignItems="center"
         justifyContent="space-between"
         mb={3}
       >
+
         <Typography variant="h6" fontWeight={700}>
           Add Department
         </Typography>
@@ -106,20 +118,24 @@ const DepartmentFormModal = ({ onClose }: Props) => {
             <Close />
           </IconButton>
         )}
+
       </Stack>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
-        <Stack spacing={3} sx={{ width: "100%" }}>
-          
+      <form onSubmit={handleSubmit(onSubmit)}>
+
+        <Stack spacing={3}>
+
           {/* Department Name */}
+
           <Box>
+
             <Typography
               variant="caption"
               sx={{
                 ml: 1,
                 fontWeight: 700,
-                color: "#00A76F",
-                letterSpacing: 0.5,
+                color: accentColor,
+                letterSpacing: 0.5
               }}
             >
               DEPARTMENT NAME
@@ -134,33 +150,36 @@ const DepartmentFormModal = ({ onClose }: Props) => {
               helperText={errors.name?.message}
               sx={{
                 "& .MuiFilledInput-root": {
-                  bgcolor: "rgba(145,158,171,0.08)",
+                  bgcolor: theme.palette.action.hover,
                   borderRadius: "12px",
-                  mt: 1,
-                },
+                  mt: 1
+                }
               }}
               InputProps={{
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
                     <CorporateFare
-                      sx={{ color: "#637381", fontSize: 20 }}
+                      sx={{ color: theme.palette.text.secondary }}
                     />
                   </InputAdornment>
                 ),
               }}
             />
+
           </Box>
 
           {/* Description */}
+
           <Box>
+
             <Typography
               variant="caption"
               sx={{
                 ml: 1,
                 fontWeight: 700,
-                color: "#00A76F",
-                letterSpacing: 0.5,
+                color: accentColor,
+                letterSpacing: 0.5
               }}
             >
               DESCRIPTION
@@ -177,10 +196,10 @@ const DepartmentFormModal = ({ onClose }: Props) => {
               helperText={errors.description?.message}
               sx={{
                 "& .MuiFilledInput-root": {
-                  bgcolor: "rgba(145,158,171,0.08)",
+                  bgcolor: theme.palette.action.hover,
                   borderRadius: "12px",
-                  mt: 1,
-                },
+                  mt: 1
+                }
               }}
               InputProps={{
                 disableUnderline: true,
@@ -190,15 +209,17 @@ const DepartmentFormModal = ({ onClose }: Props) => {
                     sx={{ alignSelf: "flex-start", mt: 1 }}
                   >
                     <EditNote
-                      sx={{ color: "#637381", fontSize: 20 }}
+                      sx={{ color: theme.palette.text.secondary }}
                     />
                   </InputAdornment>
                 ),
               }}
             />
+
           </Box>
 
           {/* Submit */}
+
           <LoadingButton
             fullWidth
             size="large"
@@ -206,24 +227,28 @@ const DepartmentFormModal = ({ onClose }: Props) => {
             variant="contained"
             loading={loading}
             sx={{
-              width: "100%",
-              bgcolor: "#212B36",
               py: 1.6,
               borderRadius: "12px",
               fontWeight: 700,
               textTransform: "none",
               fontSize: "15px",
+              bgcolor: accentColor,
               "&:hover": {
-                bgcolor: "#454F5B",
-              },
+                bgcolor: accentColor
+              }
             }}
           >
             Create Department
           </LoadingButton>
+
         </Stack>
+
       </form>
+
     </Card>
+
   );
+
 };
 
 export default DepartmentFormModal;

@@ -3,17 +3,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-// import { RootState } from "@/redux/store";
-import { deleteDepartment, getDepartmentList, resetDepartmentState } from "@/redux/slice/doctorCRUDSlice";
+import { deleteDepartment, getDepartmentList } from "@/redux/slice/doctorCRUDSlice";
 
 import {
   Box,
   Typography,
-  Button,
-  Paper,
+  Card,
   IconButton,
-  Menu,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -22,21 +18,32 @@ import {
   Chip,
   TablePagination,
   Skeleton,
+  Stack,
+  Avatar,
+  TextField,
+  MenuItem,
+  InputAdornment
 } from "@mui/material";
 
-import AddIcon from "@mui/icons-material/Add";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import { useTheme } from "@mui/material/styles";
 
-import { useRouter } from "next/navigation";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterListIcon from "@mui/icons-material/FilterList";
+
 import AddDepartmentModal from "@/components/modal/addDepaermentModal/addDepartmentModal";
+import ViewDepartmentModal from "@/components/modal/viewDepartmentModal/viewDepartmentModal";
+
 import AddButton from "@/components/ui/addButton/addButton";
+
 import Swal from "sweetalert2";
 
 export default function DepartmentList() {
+
   const dispatch = useDispatch<any>();
-  const router = useRouter();
+  const theme = useTheme();
 
   const SIDEBAR_WIDTH = 280;
 
@@ -44,49 +51,59 @@ export default function DepartmentList() {
     (state: RootState) => state.doctor
   );
 
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedDept, setSelectedDept] = useState<any>(null);
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [search, setSearch] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("all");
+
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [viewDept, setViewDept] = useState<any>(null);
 
   useEffect(() => {
-    
-    dispatch(getDepartmentList());
+    dispatch(getDepartmentList({}));
   }, [dispatch]);
 
-  const openMenu = (event: any, dept: any) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedDept(dept);
+  useEffect(() => {
+    setPage(0);
+  }, [search, departmentFilter]);
+
+  const filteredDepartments = departmentList?.filter((dept: any) => {
+
+    const matchesSearch = search
+      ? dept.name?.toLowerCase().includes(search.toLowerCase())
+      : true;
+
+    const matchesDepartment =
+      departmentFilter === "all" || dept.name === departmentFilter;
+
+    return matchesSearch && matchesDepartment;
+
+  }) || [];
+
+  const paginatedDepartments = filteredDepartments.slice(
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage
+  );
+
+  const handleDelete = (dept: any) => {
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This department will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+        dispatch(deleteDepartment(dept._id));
+      }
+
+    });
+
   };
-
-  const closeMenu = () => {
-    setAnchorEl(null);
-  };
-
-
-
-  const handleDelete = () => {
-  if (!selectedDept) return;
-
-  Swal.fire({
-    title: "Are you sure?",
-    text: "This department will be permanently deleted!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      dispatch(deleteDepartment(selectedDept._id));
-    }
-  });
-
-  closeMenu();
-};
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -95,177 +112,312 @@ export default function DepartmentList() {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+
   };
 
   return (
+
     <Box
       sx={{
         ml: `${SIDEBAR_WIDTH}px`,
-        width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
+        p: 4,
         minHeight: "100vh",
-        p: 3,
-        boxSizing: "border-box",
+        bgcolor: "background.default"
       }}
     >
-      {/* Header */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h4" fontWeight={700}>
-            Department Management
-          </Typography>
 
+      {/* HEADER */}
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mb: 4 }}
+      >
+
+        <Typography variant="h4" fontWeight={700}>
+          Department Management
           <Typography color="text.secondary">
             Manage all departments in the hospital
           </Typography>
-        </Box>
+        </Typography>
 
         <AddButton
-  text="Add Department"
-  startIcon={<AddIcon />}
-  onClick={() => setOpenAddModal(true)}
-/>
+          text="Add Department"
+          startIcon={<AddIcon />}
+          onClick={() => setOpenAddModal(true)}
+        />
+
         <AddDepartmentModal
           open={openAddModal}
           handleClose={() => setOpenAddModal(false)}
         />
-      </Box>
 
-      {/* Table */}
-      <Paper
+        <ViewDepartmentModal
+          open={Boolean(viewDept)}
+          department={viewDept}
+          handleClose={() => setViewDept(null)}
+        />
+
+      </Stack>
+
+      {/* MODERN SEARCH + FILTER BAR */}
+
+      <Card
         sx={{
+          p: 2,
+          mb: 3,
           borderRadius: 3,
-          overflow: "hidden",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.05)",
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? "0 4px 20px rgba(0,0,0,0.4)"
+              : "0 4px 14px rgba(0,0,0,0.06)"
         }}
       >
-        <Table stickyHeader>
-          {/* Glass Morphism Header */}
-          <TableHead sx={{ bgcolor: "#F4F6F8" }}>
-            <TableRow
-              sx={{
-                backdropFilter: "blur(14px)",
-                background: "rgba(255,255,255,0.6)",
-                borderBottom: "1px solid rgba(255,255,255,0.3)",
-              }}
-            >
-              <TableCell sx={{ fontWeight: 700 }}>Department</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Description</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Created</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Action</TableCell>
+
+        <Stack direction="row" spacing={2} alignItems="center">
+
+          {/* SEARCH */}
+
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Search department..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: "text.secondary" }} />
+                </InputAdornment>
+              )
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "30px"
+              }
+            }}
+          />
+
+          {/* FILTER */}
+
+          <TextField
+            select
+            size="small"
+            value={departmentFilter}
+            onChange={(e) => setDepartmentFilter(e.target.value)}
+            sx={{
+              width: 220,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "30px"
+              }
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FilterListIcon sx={{ fontSize: 20 }} />
+                </InputAdornment>
+              )
+            }}
+          >
+
+            <MenuItem value="all">All Departments</MenuItem>
+
+            {departmentList?.map((dept: any) => (
+
+              <MenuItem key={dept._id} value={dept.name}>
+                {dept.name}
+              </MenuItem>
+
+            ))}
+
+          </TextField>
+
+        </Stack>
+
+      </Card>
+
+      {/* TABLE CARD */}
+
+      <Card
+        sx={{
+          borderRadius: 4,
+          bgcolor: "background.paper",
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? "0 4px 20px rgba(0,0,0,0.5)"
+              : "0 8px 16px rgba(145,158,171,0.08)"
+        }}
+      >
+
+        <Table>
+
+          <TableHead
+            sx={{
+              bgcolor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255,255,255,0.04)"
+                  : "#F4F6F8",
+              "& .MuiTableCell-root": {
+                fontWeight: 700,
+                textTransform: "uppercase",
+                fontSize: "14px",
+                letterSpacing: "0.08em",
+                color: theme.palette.text.secondary,
+                borderBottom: `1px solid ${theme.palette.divider}`
+              }
+            }}
+          >
+
+            <TableRow>
+
+              <TableCell>Department</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Created Date</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell align="right">Actions</TableCell>
+
             </TableRow>
+
           </TableHead>
 
           <TableBody>
-            {/* Skeleton Loader */}
-            {loading
-              ? Array.from(new Array(rowsPerPage)).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton width="60%" height={30} />
-                  </TableCell>
 
-                  <TableCell>
-                    <Skeleton width="80%" height={30} />
-                  </TableCell>
+  {loading ? (
 
-                  <TableCell>
-                    <Skeleton width="40%" height={30} />
-                  </TableCell>
+    Array.from(new Array(rowsPerPage)).map((_, index) => (
 
-                  <TableCell>
-                    <Skeleton width="50%" height={30} />
-                  </TableCell>
+      <TableRow key={index}>
 
-                  <TableCell>
-                    <Skeleton width={30} height={30} />
-                  </TableCell>
-                </TableRow>
-              ))
-              : departmentList
-                ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((dept: any) => (
-                  <TableRow
-                    key={dept._id}
-                    hover
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: "#F9FAFB",
-                      },
-                    }}
-                  >
-                    <TableCell sx={{ fontWeight: 600 }}>
-                      {dept.name}
-                    </TableCell>
+        <TableCell><Skeleton width="60%" height={30} /></TableCell>
+        <TableCell><Skeleton width="80%" height={30} /></TableCell>
+        <TableCell><Skeleton width="40%" height={30} /></TableCell>
+        <TableCell><Skeleton width="50%" height={30} /></TableCell>
+        <TableCell><Skeleton width={80} height={30} /></TableCell>
 
-                    <TableCell>{dept.description}</TableCell>
+      </TableRow>
 
-                    <TableCell>
-                      {new Date(dept.createdAt).toLocaleDateString()}
-                    </TableCell>
+    ))
 
-                    <TableCell>
-                      <Chip
-                        label="Active"
-                        size="small"
-                        sx={{
-                          bgcolor: "#E6F6F1",
-                          color: "#00A76F",
-                          fontWeight: 600,
-                        }}
-                      />
-                    </TableCell>
+  ) : filteredDepartments.length === 0 ? (
 
-                    <TableCell>
-                      <IconButton
-                        onClick={(e) => openMenu(e, dept)}
-                        size="small"
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
+    <TableRow>
+      <TableCell colSpan={5} align="center">
+        <Typography sx={{ py: 5, color: "text.secondary" }}>
+          No department found. Try with a different name.
+        </Typography>
+      </TableCell>
+    </TableRow>
+
+  ) : (
+
+    paginatedDepartments.map((dept: any) => (
+
+      <TableRow key={dept._id} hover>
+
+        <TableCell>
+
+          <Stack direction="row" spacing={2} alignItems="center">
+
+            <Avatar
+              sx={{
+                bgcolor:
+                  theme.palette.mode === "dark"
+                    ? "primary.dark"
+                    : "#E8F5E9",
+                color:
+                  theme.palette.mode === "dark"
+                    ? "#fff"
+                    : "#2E7D32",
+              }}
+            >
+              {dept.name.charAt(0)}
+            </Avatar>
+
+            <Typography fontWeight={600}>
+              {dept.name}
+            </Typography>
+
+          </Stack>
+
+        </TableCell>
+
+        <TableCell>{dept.description}</TableCell>
+
+        <TableCell>
+          {new Date(dept.createdAt).toLocaleDateString()}
+        </TableCell>
+
+        <TableCell>
+
+          <Chip
+            label="Active"
+            size="small"
+            sx={{
+              bgcolor:
+                theme.palette.mode === "dark"
+                  ? "rgba(0,167,111,0.2)"
+                  : "#E6F6F1",
+              color: "#00A76F",
+              fontWeight: 600
+            }}
+          />
+
+        </TableCell>
+
+        <TableCell align="right">
+
+          <Stack direction="row" spacing={1} justifyContent="flex-end">
+
+            <IconButton
+              color="primary"
+              onClick={() => setViewDept(dept)}
+            >
+              <VisibilityIcon />
+            </IconButton>
+
+            <IconButton
+              color="error"
+              onClick={() => handleDelete(dept)}
+            >
+              <DeleteIcon />
+            </IconButton>
+
+          </Stack>
+
+        </TableCell>
+
+      </TableRow>
+
+    ))
+
+  )}
+
+</TableBody>
+
         </Table>
-      </Paper>
 
-      {/* Pagination */}
-      <Box
-        sx={{
-          mt: 2,
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
-        <TablePagination
-          component="div"
-          count={departmentList?.length || 0}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 20]}
-        />
-      </Box>
+        <Box sx={{ p: 3, display: "flex", justifyContent: "flex-end" }}>
 
-      {/* Action Menu */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+          <TablePagination
+            component="div"
+            count={filteredDepartments.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 20]}
+          />
 
-        <MenuItem onClick={handleDelete} sx={{ color: "red" }}>
-          <DeleteIcon sx={{ mr: 1 }} />
-          Delete
-        </MenuItem>
-      </Menu>
+        </Box>
+
+      </Card>
+
     </Box>
+
   );
+
 }

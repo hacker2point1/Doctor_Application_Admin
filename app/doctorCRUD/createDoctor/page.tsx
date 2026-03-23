@@ -14,20 +14,19 @@ import {
   Typography,
   InputAdornment,
   Autocomplete,
-  Card,
   IconButton,
+  useTheme,
 } from "@mui/material";
 
 import { LoadingButton } from "@mui/lab";
 
 import {
   Person,
-  LocalHospital,
-  AttachMoney,
   CalendarMonth,
   AccessTime,
   Business,
   Close,
+  CurrencyRupee,
 } from "@mui/icons-material";
 
 import {
@@ -41,16 +40,26 @@ interface DoctorForm {
   specialization: string;
   fees: string;
   departmentId: string;
-  date: string;
-  time: string;
+  endTime: string;
+  startTime: string;
+slotDuration:String;
 }
 
 const CreateDoctor = ({ closeModal }: any) => {
-  const dispatch = useDispatch<any>();
 
+  const theme = useTheme();
+
+  const accentColor =
+    theme.palette.mode === "light" ? "#00A76F" : theme.palette.primary.main;
+
+  const dispatch = useDispatch<any>();
   const { departmentList } = useSelector((state: any) => state.doctor);
 
   const [loading, setLoading] = useState(false);
+
+  /* ---------- NEW (TODAY DATE BLOCKER) ---------- */
+
+  const today = new Date().toISOString().split("T")[0];
 
   const {
     register,
@@ -61,11 +70,11 @@ const CreateDoctor = ({ closeModal }: any) => {
     resolver: yupResolver(
       yup.object({
         name: yup.string().required("Name required"),
-        specialization: yup.string().required("Specialization required"),
         fees: yup.string().required("Fees required"),
         departmentId: yup.string().required("Department required"),
-        date: yup.string().required("Date required"),
-        time: yup.string().required("Time required"),
+        startTime: yup.string().required("StartTime required"),
+        endTime: yup.string().required("EndTime required"),
+        slotDuration: yup.string().required("Slot duration is required")
       })
     ),
   });
@@ -77,15 +86,16 @@ const CreateDoctor = ({ closeModal }: any) => {
   const onSubmit = async (data: DoctorForm) => {
     const payload = {
       name: data.name,
-      specialization: data.specialization,
       fees: data.fees,
       departmentId: data.departmentId,
-      availableSlots: [
+
+      schedule: 
         {
-          date: data.date,
-          time: data.time,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          slotDuration :data.slotDuration
         },
-      ],
+      
     };
 
     try {
@@ -104,19 +114,8 @@ const CreateDoctor = ({ closeModal }: any) => {
   };
 
   return (
-    <Card
-      sx={{
-       
-        maxWidth:"100%",
-        borderRadius: "20px",
-        p: 4,
-        background: "rgba(255,255,255,0.85)",
-        backdropFilter: "blur(20px)",
-        border: "1px solid rgba(145,158,171,0.2)",
-        boxShadow: "0 12px 24px rgba(0,0,0,0.08)",
-      }}
-    >
-      {/* Header */}
+    <Box sx={{ width: "100%" }}>
+      
       <Stack
         direction="row"
         alignItems="center"
@@ -127,25 +126,19 @@ const CreateDoctor = ({ closeModal }: any) => {
           Add Doctor
         </Typography>
 
-        {closeModal && (
-          <IconButton onClick={closeModal}>
-            <Close />
-          </IconButton>
-        )}
+        <IconButton onClick={closeModal}>
+          <Close />
+        </IconButton>
       </Stack>
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>
+
           {/* Doctor Name */}
           <Box>
             <Typography
               variant="caption"
-              sx={{
-                ml: 1,
-                fontWeight: 700,
-                color: "#00A76F",
-                letterSpacing: 0.5,
-              }}
+              sx={{ ml: 1, fontWeight: 700, color: accentColor }}
             >
               DOCTOR NAME
             </Typography>
@@ -159,7 +152,7 @@ const CreateDoctor = ({ closeModal }: any) => {
               helperText={errors.name?.message}
               sx={{
                 "& .MuiFilledInput-root": {
-                  bgcolor: "rgba(145,158,171,0.08)",
+                  bgcolor: theme.palette.action.hover,
                   borderRadius: "12px",
                   mt: 1,
                 },
@@ -168,46 +161,7 @@ const CreateDoctor = ({ closeModal }: any) => {
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Person sx={{ color: "#637381", fontSize: 20 }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-
-          {/* Specialization */}
-          <Box>
-            <Typography
-              variant="caption"
-              sx={{
-                ml: 1,
-                fontWeight: 700,
-                color: "#00A76F",
-                letterSpacing: 0.5,
-              }}
-            >
-              SPECIALIZATION
-            </Typography>
-
-            <TextField
-              fullWidth
-              variant="filled"
-              placeholder="e.g. Cardiologist"
-              {...register("specialization")}
-              error={!!errors.specialization}
-              helperText={errors.specialization?.message}
-              sx={{
-                "& .MuiFilledInput-root": {
-                  bgcolor: "rgba(145,158,171,0.08)",
-                  borderRadius: "12px",
-                  mt: 1,
-                },
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LocalHospital sx={{ color: "#637381", fontSize: 20 }} />
+                    <Person sx={{ color: theme.palette.text.secondary }} />
                   </InputAdornment>
                 ),
               }}
@@ -218,12 +172,7 @@ const CreateDoctor = ({ closeModal }: any) => {
           <Box>
             <Typography
               variant="caption"
-              sx={{
-                ml: 1,
-                fontWeight: 700,
-                color: "#00A76F",
-                letterSpacing: 0.5,
-              }}
+              sx={{ ml: 1, fontWeight: 700, color: accentColor }}
             >
               CONSULTATION FEES
             </Typography>
@@ -237,7 +186,7 @@ const CreateDoctor = ({ closeModal }: any) => {
               helperText={errors.fees?.message}
               sx={{
                 "& .MuiFilledInput-root": {
-                  bgcolor: "rgba(145,158,171,0.08)",
+                  bgcolor: theme.palette.action.hover,
                   borderRadius: "12px",
                   mt: 1,
                 },
@@ -246,7 +195,7 @@ const CreateDoctor = ({ closeModal }: any) => {
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <AttachMoney sx={{ color: "#637381", fontSize: 20 }} />
+                    <CurrencyRupee sx={{ color: theme.palette.text.secondary }} />
                   </InputAdornment>
                 ),
               }}
@@ -257,12 +206,7 @@ const CreateDoctor = ({ closeModal }: any) => {
           <Box>
             <Typography
               variant="caption"
-              sx={{
-                ml: 1,
-                fontWeight: 700,
-                color: "#00A76F",
-                letterSpacing: 0.5,
-              }}
+              sx={{ ml: 1, fontWeight: 700, color: accentColor }}
             >
               DEPARTMENT
             </Typography>
@@ -280,7 +224,7 @@ const CreateDoctor = ({ closeModal }: any) => {
                   helperText={errors.departmentId?.message}
                   sx={{
                     "& .MuiFilledInput-root": {
-                      bgcolor: "rgba(145,158,171,0.08)",
+                      bgcolor: theme.palette.action.hover,
                       borderRadius: "12px",
                       mt: 1,
                     },
@@ -291,9 +235,7 @@ const CreateDoctor = ({ closeModal }: any) => {
                     startAdornment: (
                       <>
                         <InputAdornment position="start">
-                          <Business
-                            sx={{ color: "#637381", fontSize: 20 }}
-                          />
+                          <Business sx={{ color: theme.palette.text.secondary }} />
                         </InputAdornment>
                         {params.InputProps.startAdornment}
                       </>
@@ -306,85 +248,45 @@ const CreateDoctor = ({ closeModal }: any) => {
 
           {/* Date + Time */}
           <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Typography
-                variant="caption"
-                sx={{
-                  ml: 1,
-                  fontWeight: 700,
-                  color: "#00A76F",
-                  letterSpacing: 0.5,
-                }}
-              >
-                DATE
-              </Typography>
-
-              <TextField
-                fullWidth
-                type="date"
-                variant="filled"
-                {...register("date")}
-                error={!!errors.date}
-                helperText={errors.date?.message}
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    bgcolor: "rgba(145,158,171,0.08)",
-                    borderRadius: "12px",
-                    mt: 1,
-                  },
-                }}
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CalendarMonth
-                        sx={{ color: "#637381", fontSize: 20 }}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
 
             <Grid item xs={6}>
-              <Typography
-                variant="caption"
-                sx={{
-                  ml: 1,
-                  fontWeight: 700,
-                  color: "#00A76F",
-                  letterSpacing: 0.5,
-                }}
-              >
-                TIME
-              </Typography>
-
               <TextField
                 fullWidth
                 type="time"
                 variant="filled"
-                {...register("time")}
-                error={!!errors.time}
-                helperText={errors.time?.message}
-                sx={{
-                  "& .MuiFilledInput-root": {
-                    bgcolor: "rgba(145,158,171,0.08)",
-                    borderRadius: "12px",
-                    mt: 1,
-                  },
-                }}
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccessTime
-                        sx={{ color: "#637381", fontSize: 20 }}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
+                {...register("startTime")}
+                error={!!errors.startTime}
+                helperText={errors.startTime?.message}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ min: today }}  // NEW
               />
             </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="time"
+                variant="filled"
+                {...register("endTime")}
+                error={!!errors.endTime}
+                helperText={errors.endTime?.message}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
+
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="slotDuration"
+                variant="filled"
+                {...register("slotDuration")}
+                error={!!errors.slotDuration}
+                helperText={errors.slotDuration?.message}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
           </Grid>
 
           {/* Submit */}
@@ -395,31 +297,272 @@ const CreateDoctor = ({ closeModal }: any) => {
             variant="contained"
             loading={loading}
             sx={{
-              bgcolor: "#212B36",
               py: 1.6,
               borderRadius: "12px",
               fontWeight: 700,
               textTransform: "none",
               fontSize: "15px",
-              "&:hover": {
-                bgcolor: "#454F5B",
-              },
+              bgcolor: accentColor,
+              "&:hover": { bgcolor: accentColor },
             }}
           >
             Create Doctor
           </LoadingButton>
+
         </Stack>
       </Box>
-    </Card>
+    </Box>
   );
 };
 
 export default CreateDoctor;
 
+//another type of from will open for that you have to also uncomment the modal
+// "use client";
 
+// import React, { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useForm } from "react-hook-form";
+// import { yupResolver } from "@hookform/resolvers/yup";
+// import * as yup from "yup";
 
+// import {
+//   Box,
+//   Grid,
+//   Stack,
+//   TextField,
+//   Typography,
+//   Autocomplete,
+//   IconButton,
+//   useTheme,
+//   Divider
+// } from "@mui/material";
 
+// import { LoadingButton } from "@mui/lab";
 
+// import {
+//   Close
+// } from "@mui/icons-material";
+
+// import {
+//   createDoctor,
+//   getDepartmentList,
+//   getDoctorList
+// } from "@/redux/slice/doctorCRUDSlice";
+
+// interface DoctorForm {
+//   name: string;
+//   specialization: string;
+//   fees: string;
+//   departmentId: string;
+//   date: string;
+//   time: string;
+// }
+
+// const schema = yup.object({
+//   name: yup.string().required("Name required"),
+//   specialization: yup.string().required("Specialization required"),
+//   fees: yup.string().required("Fees required"),
+//   departmentId: yup.string().required("Department required"),
+//   date: yup.string().required("Date required"),
+//   time: yup.string().required("Time required"),
+// });
+
+// const CreateDoctorForm = ({ closeModal }: any) => {
+
+//   const theme = useTheme();
+//   const accentColor =
+//     theme.palette.mode === "light" ? "#00A76F" : theme.palette.primary.main;
+
+//   const dispatch = useDispatch<any>();
+//   const { departmentList } = useSelector((state: any) => state.doctor);
+
+//   const [loading, setLoading] = useState(false);
+
+//   const {
+//     register,
+//     handleSubmit,
+//     setValue,
+//     formState: { errors }
+//   } = useForm<DoctorForm>({
+//     resolver: yupResolver(schema)
+//   });
+
+//   useEffect(() => {
+//     dispatch(getDepartmentList({}));
+//   }, [dispatch]);
+
+//   const onSubmit = async (data: DoctorForm) => {
+
+//     const payload = {
+//       name: data.name,
+//       specialization: data.specialization,
+//       fees: data.fees,
+//       departmentId: data.departmentId,
+//       availableSlots: [
+//         {
+//           date: data.date,
+//           time: data.time
+//         }
+//       ]
+//     };
+
+//     try {
+//       setLoading(true);
+
+//       await dispatch(createDoctor(payload)).unwrap();
+
+//       dispatch(getDoctorList({ page: 1, limit: 5 }));
+
+//       closeModal();
+
+//     } catch (err) {
+//       console.log(err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <Box display="flex" flexDirection="column" height="100%">
+
+//       {/* HEADER */}
+
+//       <Stack
+//         direction="row"
+//         justifyContent="space-between"
+//         alignItems="center"
+//         px={3}
+//         py={2}
+//       >
+//         <Typography fontWeight={700} fontSize={18}>
+//           Add Doctor
+//         </Typography>
+
+//         <IconButton onClick={closeModal}>
+//           <Close />
+//         </IconButton>
+//       </Stack>
+
+//       <Divider />
+
+//       {/* FORM */}
+
+//       <Box
+//         component="form"
+//         onSubmit={handleSubmit(onSubmit)}
+//         sx={{
+//           p: 3,
+//           overflowY: "auto"
+//         }}
+//       >
+
+//         <Stack spacing={3}>
+
+//           <TextField
+//             label="Doctor Name"
+//             fullWidth
+//             {...register("name")}
+//             error={!!errors.name}
+//             helperText={errors.name?.message}
+//           />
+
+//           <TextField
+//             label="Specialization"
+//             fullWidth
+//             {...register("specialization")}
+//             error={!!errors.specialization}
+//             helperText={errors.specialization?.message}
+//           />
+
+//           <TextField
+//             label="Consultation Fees"
+//             fullWidth
+//             {...register("fees")}
+//             error={!!errors.fees}
+//             helperText={errors.fees?.message}
+//           />
+
+//           {/* BETTER DROPDOWN */}
+
+//           <Autocomplete
+//             options={departmentList || []}
+//             getOptionLabel={(option: any) => option.name}
+//             onChange={(e, value) => setValue("departmentId", value?._id)}
+//             renderInput={(params) => (
+//               <TextField
+//                 {...params}
+//                 label="Department"
+//                 error={!!errors.departmentId}
+//                 helperText={errors.departmentId?.message}
+//               />
+//             )}
+//           />
+
+//           <Grid container spacing={2}>
+
+//             <Grid item xs={6}>
+//               <TextField
+//                 label="Date"
+//                 type="date"
+//                 fullWidth
+//                 InputLabelProps={{ shrink: true }}
+//                 {...register("date")}
+//                 error={!!errors.date}
+//                 helperText={errors.date?.message}
+//               />
+//             </Grid>
+
+//             <Grid item xs={6}>
+//               <TextField
+//                 label="Time"
+//                 type="time"
+//                 fullWidth
+//                 InputLabelProps={{ shrink: true }}
+//                 {...register("time")}
+//                 error={!!errors.time}
+//                 helperText={errors.time?.message}
+//               />
+//             </Grid>
+
+//           </Grid>
+
+//         </Stack>
+
+//       </Box>
+
+//       <Divider />
+
+//       {/* FOOTER */}
+
+//       <Box p={3}>
+
+//         <LoadingButton
+//           fullWidth
+//           size="large"
+//           type="submit"
+//           variant="contained"
+//           loading={loading}
+//           sx={{
+//             borderRadius: "10px",
+//             textTransform: "none",
+//             fontWeight: 700,
+//             bgcolor: accentColor,
+//             "&:hover": { bgcolor: accentColor }
+//           }}
+//         >
+//           Create Doctor
+//         </LoadingButton>
+
+//       </Box>
+
+//     </Box>
+//   );
+// };
+
+// export default CreateDoctorForm;
+
+//this is another 
 
 // "use client";
 

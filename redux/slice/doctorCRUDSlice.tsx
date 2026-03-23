@@ -126,9 +126,10 @@ export const createDoctor = createAsyncThunk<any, any>(
 //get department list
 export const getDepartmentList = createAsyncThunk<any, any>(
   "getDepaermentList",
-  async (payload) => {
+  async (payload: any) => {
     const response = await axiosInstance.get(
       endpoints.department.departmentList,
+      { params: payload }
     );
     // console.log(response , "department List")
     return response.data;
@@ -286,7 +287,7 @@ const doctorSlice = createSlice({
 
       .addCase(getDoctorList.fulfilled, (state, { payload }) => {
         state.doctorList = payload.data;
-       
+
         console.log(payload);
         state.loading = false;
       })
@@ -299,34 +300,34 @@ const doctorSlice = createSlice({
       .addCase(deleteDoctor.pending, (state, { payload }) => {
         state.loading = true
       })
-            .addCase(deleteDoctor.fulfilled, (state, action) => {
-              state.loading=false
+      .addCase(deleteDoctor.fulfilled, (state, action) => {
+        state.loading = false
         state.doctorList = state.doctorList.filter(
           (doctor: any) => doctor?.id !== action.meta.arg
         )
 
       })
-      
+
       .addCase(deleteDoctor.rejected, (state, { payload }) => {
         state.loading = true;
       })
 
       //delete department
       .addCase(deleteDepartment.pending, (state) => {
-  state.loading = true;
-})
+        state.loading = true;
+      })
 
-.addCase(deleteDepartment.fulfilled, (state, action) => {
-  state.loading = false;
+      .addCase(deleteDepartment.fulfilled, (state, action) => {
+        state.loading = false;
 
-  state.departmentList = state.departmentList.filter(
-    (dept: any) => dept._id !== action.payload.id
-  );
-})
+        state.departmentList = state.departmentList.filter(
+          (dept: any) => dept._id !== action.payload.id
+        );
+      })
 
-.addCase(deleteDepartment.rejected, (state) => {
-  state.loading = false;
-});
+      .addCase(deleteDepartment.rejected, (state) => {
+        state.loading = false;
+      });
   },
 });
 

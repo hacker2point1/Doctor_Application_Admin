@@ -26,5 +26,8 @@ export const config = {
     "/doctorCRUD/departmentList",
     "/doctorCRUD/doctorList",
     "/doctorCRUD/manageAppoinment",
+    "/doctorCRUD/acceptedAppoinments",
+    "/dashboard",
+    "/auth/profile"
   ],
 };

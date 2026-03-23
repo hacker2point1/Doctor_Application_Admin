@@ -8,8 +8,8 @@ import { toast } from "sonner";
 
 interface Appointment {
   _id: string;
-  patientName: string;
-  doctorName: string;
+  name: string;
+  doctorId: string;
   date: string;
   status: string;
 }
@@ -18,12 +18,14 @@ interface AppointmentState {
   loading: boolean;
   error: string | null;
   appointmentList: Appointment[];
+  acceptedAppoinmentList: Appointment[];
 }
 
 const appointmentInitialState: AppointmentState = {
   loading: false,
   error: null,
   appointmentList: [],
+  acceptedAppoinmentList: [],
 };
 
 // get appointment list
@@ -39,13 +41,30 @@ export const getAppointmentList = createAsyncThunk<any, any>(
     }
   }
 );
+//accepted list
+export const getAllAcceptedAppoinmentList = createAsyncThunk<any, any>(
+  "getAllAcceptedAppoinmentList",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(endpoints.appoinment.acceptedAppoinments);
+
+      // Normalize different response shapes (array vs { data: [] })
+      const data =
+        Array.isArray(response.data) ? response.data : response.data?.data ?? [];
+
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
 
 // accept appointment
 export const acceptAppointment = createAsyncThunk<any, string>(
   "acceptAppointment",
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(`/admin/appointments/${id}/accept`, {});
+      const response = await axiosInstance.put(endpoints.appoinment.confirmById(id), {});
       toast.success("Appointment accepted");
       return response.data;
     } catch (error: any) {
@@ -60,7 +79,7 @@ export const rejectAppointment = createAsyncThunk<any, string>(
   "rejectAppointment",
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(`/admin/appointments/${id}/reject`, {});
+      const response = await axiosInstance.put(endpoints.appoinment.cancelById(id), {});
       toast.success("Appointment rejected");
       return response.data;
     } catch (error: any) {
@@ -82,20 +101,38 @@ const appointmentSlice = createSlice({
       })
       .addCase(getAppointmentList.fulfilled, (state, { payload }) => {
         state.loading = false;
-        state.appointmentList = payload.data || [];
+        state.appointmentList = payload?.data || [];
       })
       .addCase(getAppointmentList.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload as string;
       })
+
+// list of accepted appoinments
+.addCase(getAllAcceptedAppoinmentList.pending, (state) => {
+  state.loading = true;
+})
+.addCase(getAllAcceptedAppoinmentList.fulfilled, (state, { payload }) => {
+  state.acceptedAppoinmentList = Array.isArray(payload) ? payload : payload?.data || [];
+  state.loading = false;
+})
+.addCase(getAllAcceptedAppoinmentList.rejected, (state, { payload }) => {
+  state.loading = false;
+  state.error = payload as string;
+})
       // accept appointment
       .addCase(acceptAppointment.pending, (state) => {
         state.loading = true;
       })
       .addCase(acceptAppointment.fulfilled, (state, { payload }) => {
         state.loading = false;
-        if (payload?.data?._id) {
-          const idx = state.appointmentList.findIndex((a) => a._id === payload.data._id);
+
+        
+        const appointment = payload?.data ?? payload;
+        const id = appointment?._id;
+
+        if (id) {
+          const idx = state.appointmentList.findIndex((a) => a._id === id);
           if (idx !== -1) {
             state.appointmentList[idx].status = "accepted";
           }
@@ -111,8 +148,12 @@ const appointmentSlice = createSlice({
       })
       .addCase(rejectAppointment.fulfilled, (state, { payload }) => {
         state.loading = false;
-        if (payload?.data?._id) {
-          const idx = state.appointmentList.findIndex((a) => a._id === payload.data._id);
+
+        const appointment = payload?.data ?? payload;
+        const id = appointment?._id;
+
+        if (id) {
+          const idx = state.appointmentList.findIndex((a) => a._id === id);
           if (idx !== -1) {
             state.appointmentList[idx].status = "rejected";
           }
