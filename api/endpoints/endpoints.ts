@@ -6,7 +6,8 @@ export const endpoints = {
         createDeptId: "/admin/doctor/department",
         createDoctor: "/admin/doctor/create",
         departmentList: "/admin/departments/list",
-        deleteDepartment: "/admin/department/delete"
+        deleteDepartment: "/admin/department/delete",
+        location:"/admin/diagnostic/create",
     },
     doctor: {
         doctorList: "/admin/doctor/list",
@@ -41,7 +42,8 @@ export const endpoint = [
     endpoints.appoinment.listOfAppoinments,
     endpoints.appoinment.confirmById,
     endpoints.appoinment.cancelById,
-    endpoints.appoinment.acceptedAppoinments
+    endpoints.appoinment.acceptedAppoinments,
+    endpoints.department.location
 
 ]
 

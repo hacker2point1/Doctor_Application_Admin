@@ -37,9 +37,10 @@ import { toast } from "sonner";
 import { Cookies } from "react-cookie";
 import { useThemeMode } from "@/src/theme/themeContext";
 import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
+import AddLocationAltRoundedIcon from '@mui/icons-material/AddLocationAltRounded';
 
 const EXPANDED_WIDTH = 280;
-const COLLAPSED_WIDTH = 88;
+// const COLLAPSED_WIDTH = 88;
 
 export default function SidebarNavigation() {
 
@@ -54,10 +55,10 @@ export default function SidebarNavigation() {
   const [openSystem, setOpenSystem] = useState(true);
 
   // Hide the sidebar on the login page or any auth route page
-  if (pathname === "/" || pathname?.startsWith("/auth/signIn")) 
-  
-      return null;
-    
+  if (pathname === "/" || pathname?.startsWith("/auth/signIn"))
+
+    return null;
+
 
   const cookies = new Cookies();
 
@@ -85,10 +86,16 @@ export default function SidebarNavigation() {
       icon: <ScheduleOutlined />,
     },
     {
-      title:"Accepted appoinments",
-      path:"/doctorCRUD/acceptedAppoinments",
-      icon:<FileDownloadDoneIcon/>
+      title: "Accepted appoinments",
+      path: "/doctorCRUD/acceptedAppoinments",
+      icon: <FileDownloadDoneIcon />
+    },
+    {
+      title: "Locations",
+      path: "/location",
+      icon: <AddLocationAltRoundedIcon />
     }
+
   ];
 
   const handleLogout = async () => {
@@ -366,61 +373,61 @@ export default function SidebarNavigation() {
 
         {/* Profile + Logout */}
 
-<Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2 }}>
 
-  <Divider sx={{ mb: 2 }} />
+          <Divider sx={{ mb: 2 }} />
 
-  {/* Profile */}
+          {/* Profile */}
 
-  <ListItemButton
-    onClick={() => router.push("/auth/profile")}
-    sx={{
-      borderRadius: 2,
-      mb: 1,
-      color: normalText,
-      "&:hover": {
-        bgcolor: activeBg
-      }
-    }}
-  >
+          <ListItemButton
+            onClick={() => router.push("/auth/profile")}
+            sx={{
+              borderRadius: 2,
+              mb: 1,
+              color: normalText,
+              "&:hover": {
+                bgcolor: activeBg
+              }
+            }}
+          >
 
-    <ListItemIcon sx={{ color: "inherit" }}>
-      <AccountCircleIcon />
-    </ListItemIcon>
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <AccountCircleIcon />
+            </ListItemIcon>
 
-    <ListItemText
-      primary="Profile"
-      primaryTypographyProps={{
-        fontWeight: 600
-      }}
-    />
+            <ListItemText
+              primary="Profile"
+              primaryTypographyProps={{
+                fontWeight: 600
+              }}
+            />
 
-  </ListItemButton>
+          </ListItemButton>
 
-  {/* Logout */}
+          {/* Logout */}
 
-  <ListItemButton
-    onClick={handleLogout}
-    sx={{
-      borderRadius: 2,
-      color: theme.palette.error.main,
-    }}
-  >
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              borderRadius: 2,
+              color: theme.palette.error.main,
+            }}
+          >
 
-    <ListItemIcon sx={{ color: "inherit" }}>
-      <Logout />
-    </ListItemIcon>
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <Logout />
+            </ListItemIcon>
 
-    <ListItemText
-      primary="Logout"
-      primaryTypographyProps={{
-        fontWeight: 600,
-      }}
-    />
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{
+                fontWeight: 600,
+              }}
+            />
 
-  </ListItemButton>
+          </ListItemButton>
 
-</Box>
+        </Box>
 
       </Drawer>
 
