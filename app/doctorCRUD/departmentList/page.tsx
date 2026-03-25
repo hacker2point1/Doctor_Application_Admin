@@ -400,19 +400,21 @@ export default function DepartmentList() {
 
         </Table>
 
-        <Box sx={{ p: 3, display: "flex", justifyContent: "flex-end" }}>
+        {filteredDepartments.length > rowsPerPage && (
+          <Box sx={{ p: 3, display: "flex", justifyContent: "flex-end" }}>
 
-          <TablePagination
-            component="div"
-            count={filteredDepartments.length}
-            page={page}
-            onPageChange={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            rowsPerPageOptions={[5, 10, 20]}
-          />
+            <TablePagination
+              component="div"
+              count={filteredDepartments.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              rowsPerPageOptions={[5, 10, 20]}
+            />
 
-        </Box>
+          </Box>
+        )}
 
       </Card>
 

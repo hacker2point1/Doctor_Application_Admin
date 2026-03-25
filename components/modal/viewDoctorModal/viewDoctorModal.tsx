@@ -34,6 +34,14 @@ const ViewDoctorModal = ({ open, handleClose, doctor }: Props) => {
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
+      slotProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: "blur(6px)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)"
+          }
+        }
+      }}
     >
 
       {/* Header */}

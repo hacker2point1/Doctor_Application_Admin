@@ -25,8 +25,10 @@ export default function ModalWrapper({
       open={open}
       onClose={onClose}
       sx={{
-        backdropFilter: "blur(6px)",
-        backgroundColor: "rgba(0,0,0,0.2)"
+        "& .MuiBackdrop-root": {
+          backdropFilter: "blur(6px)",
+          backgroundColor: "rgba(0, 0, 0, 0.5)"
+        }
       }}
     >
 

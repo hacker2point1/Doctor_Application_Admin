@@ -551,13 +551,15 @@ export default function AcceptedAppoinments() {
 
         </Table>
 
-        <Stack alignItems="center" sx={{ mt: 3 }}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handlePageChange}
-          />
-        </Stack>
+        {filteredAppointments.length > rowsPerPage && (
+          <Stack alignItems="center" sx={{ mt: 3 }}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+            />
+          </Stack>
+        )}
 
       </Card>
 

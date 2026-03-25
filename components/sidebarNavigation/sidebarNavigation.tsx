@@ -1,7 +1,11 @@
+
+
+
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image"; 
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 
@@ -40,7 +44,7 @@ import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
 import AddLocationAltRoundedIcon from '@mui/icons-material/AddLocationAltRounded';
 
 const EXPANDED_WIDTH = 280;
-// const COLLAPSED_WIDTH = 88;
+const COLLAPSED_WIDTH = 88;
 
 export default function SidebarNavigation() {
 
@@ -54,11 +58,8 @@ export default function SidebarNavigation() {
   const [isExpanded] = useState(true);
   const [openSystem, setOpenSystem] = useState(true);
 
-  // Hide the sidebar on the login page or any auth route page
   if (pathname === "/" || pathname?.startsWith("/auth/signIn"))
-
     return null;
-
 
   const cookies = new Cookies();
 
@@ -95,11 +96,9 @@ export default function SidebarNavigation() {
       path: "/location",
       icon: <AddLocationAltRoundedIcon />
     }
-
   ];
 
   const handleLogout = async () => {
-
     cookies.remove("refreshToken", { path: "/" });
 
     try {
@@ -109,12 +108,11 @@ export default function SidebarNavigation() {
     } catch {
       toast.error("Can't Logout now");
     }
-
   };
 
   const sidebarBg =
     mode === "dark"
-      ? "linear-gradient(180deg,#0B1736,#070F22)"
+      ? "linear-gradient(180deg,#1a2a4e,#0f1f3f)"
       : "#ffffff";
 
   const normalText =
@@ -137,7 +135,6 @@ export default function SidebarNavigation() {
         sx={{
           width: isExpanded ? EXPANDED_WIDTH : COLLAPSED_WIDTH,
           flexShrink: 0,
-
           "& .MuiDrawer-paper": {
             width: isExpanded ? EXPANDED_WIDTH : COLLAPSED_WIDTH,
             boxSizing: "border-box",
@@ -148,48 +145,33 @@ export default function SidebarNavigation() {
         }}
       >
 
-        {/* Logo */}
+        
 
         <Box
           onClick={() => router.push("/dashboard")}
           sx={{
-            p: 3,
+            p: 2,
             display: "flex",
             alignItems: "center",
-            gap: 1,
+            justifyContent: "center",
             cursor: "pointer",
           }}
         >
-
           <Box
             sx={{
-              width: 40,
-              height: 40,
-              borderRadius: 2,
-              background:
-                "linear-gradient(135deg,#5B8CFF,#7C4DFF)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              fontWeight: 700,
+              position: "relative",
+              width: isExpanded ? 180 : 50,
+              height: 60,
             }}
           >
-            +
+            <Image
+              src="/img/logo3.png" 
+              alt="curewell"
+              fill
+              style={{ objectFit: "contain" }}
+              priority
+            />
           </Box>
-
-          {isExpanded && (
-            <Box>
-              <Box sx={{ fontWeight: 700 }}>
-                MediCore
-              </Box>
-
-              <Box sx={{ fontSize: 12, opacity: 0.7 }}>
-                Hospital Management
-              </Box>
-            </Box>
-          )}
-
         </Box>
 
         {/* Menu */}
@@ -261,12 +243,7 @@ export default function SidebarNavigation() {
                               }}
                             >
 
-                              <ListItemIcon
-                                sx={{
-                                  minWidth: 32,
-                                  color: "inherit",
-                                }}
-                              >
+                              <ListItemIcon sx={{ minWidth: 32, color: "inherit" }}>
                                 {child.icon}
                               </ListItemIcon>
 
@@ -326,9 +303,7 @@ export default function SidebarNavigation() {
         {/* Theme Toggle */}
 
         <Box sx={{ px: 2 }}>
-
           <ListItemButton onClick={toggleTheme} sx={{ borderRadius: 2 }}>
-
             <ListItemIcon sx={{ color: normalText }}>
               {mode === "dark" ? <LightMode /> : <DarkMode />}
             </ListItemIcon>
@@ -336,48 +311,13 @@ export default function SidebarNavigation() {
             <ListItemText
               primary={mode === "dark" ? "Light Mode" : "Dark Mode"}
             />
-
           </ListItemButton>
-
         </Box>
-
-        {/* Logout */}
-
-        {/* <Box sx={{ p: 2 }}>
-
-          <Divider sx={{ mb: 2 }} />
-
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{
-              borderRadius: 2,
-              color: theme.palette.error.main,
-            }}
-          >
-
-            <ListItemIcon sx={{ color: "inherit" }}>
-              <Logout />
-            </ListItemIcon>
-
-            <ListItemText
-              primary="Logout"
-              primaryTypographyProps={{
-                fontWeight: 600,
-              }}
-            />
-
-          </ListItemButton>
-
-        </Box> */}
-
 
         {/* Profile + Logout */}
 
         <Box sx={{ p: 2 }}>
-
           <Divider sx={{ mb: 2 }} />
-
-          {/* Profile */}
 
           <ListItemButton
             onClick={() => router.push("/auth/profile")}
@@ -385,26 +325,15 @@ export default function SidebarNavigation() {
               borderRadius: 2,
               mb: 1,
               color: normalText,
-              "&:hover": {
-                bgcolor: activeBg
-              }
+              "&:hover": { bgcolor: activeBg }
             }}
           >
-
             <ListItemIcon sx={{ color: "inherit" }}>
               <AccountCircleIcon />
             </ListItemIcon>
 
-            <ListItemText
-              primary="Profile"
-              primaryTypographyProps={{
-                fontWeight: 600
-              }}
-            />
-
+            <ListItemText primary="Profile" primaryTypographyProps={{ fontWeight: 600 }} />
           </ListItemButton>
-
-          {/* Logout */}
 
           <ListItemButton
             onClick={handleLogout}
@@ -413,18 +342,11 @@ export default function SidebarNavigation() {
               color: theme.palette.error.main,
             }}
           >
-
             <ListItemIcon sx={{ color: "inherit" }}>
               <Logout />
             </ListItemIcon>
 
-            <ListItemText
-              primary="Logout"
-              primaryTypographyProps={{
-                fontWeight: 600,
-              }}
-            />
-
+            <ListItemText primary="Logout" primaryTypographyProps={{ fontWeight: 600 }} />
           </ListItemButton>
 
         </Box>

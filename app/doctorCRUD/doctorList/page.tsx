@@ -432,13 +432,15 @@ return (
 
       </TableContainer>
 
-      <Box sx={{ p: 3, display: "flex", justifyContent: "flex-end" }}>
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={handlePageChange}
-        />
-      </Box>
+      {doctorList.length >= limit && (
+        <Box sx={{ p: 3, display: "flex", justifyContent: "flex-end" }}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+          />
+        </Box>
+      )}
 
     </Card>
 

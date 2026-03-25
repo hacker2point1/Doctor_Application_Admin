@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { toast } from "sonner";
 
 import {
   Box,
@@ -157,15 +158,18 @@ const DoctorDetailsUpdate = ({ closeModal, doctorId }: any) => {
         await dispatch(
           updateDoctorDetails({ id: doctorId, data: payload })
         ).unwrap();
+        toast.success("Doctor updated successfully!");
       } else {
         await dispatch(createDoctor(payload)).unwrap();
+        toast.success("Doctor created successfully!");
       }
 
       dispatch(getDoctorList({ page: 1, limit: 5 }));
       closeModal();
 
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      const errorMessage = error?.message || error?.response?.data?.message || "An error occurred";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

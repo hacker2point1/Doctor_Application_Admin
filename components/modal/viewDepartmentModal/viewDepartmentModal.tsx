@@ -20,7 +20,17 @@ const ViewDepartmentModal = ({ open, department, handleClose }: any) => {
 
   return (
 
-    <Modal open={open} onClose={handleClose}>
+    <Modal 
+      open={open} 
+      onClose={handleClose}
+      sx={{
+        backdropFilter: "blur(5px)",
+        "& .MuiBackdrop-root": {
+          backdropFilter: "blur(5px)",
+          backgroundColor: "rgba(0, 0, 0, 0.5)"
+        }
+      }}
+    >
 
       <Box
         sx={{
