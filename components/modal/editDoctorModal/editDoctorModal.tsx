@@ -22,25 +22,3 @@ const EditDoctorModal = ({ open, handleClose, doctorId }: any) => {
 
 export default EditDoctorModal;
 
-
-// "use client";
-
-
-// import DoctorDetailsUpdate from "@/app/doctorCRUD/doctorDetailsUpdate/page";
-// import ModalWrapper from "@/components/ui/modalWrapper/modalWrapper";
-
-
-
-// export default function EditDoctorModal({ open, handleClose }: any) {
-
-//   return (
-
-//     <ModalWrapper open={open} onClose={handleClose} width={650}>
-
-//       <DoctorDetailsUpdate onClose={handleClose} />
-
-//     </ModalWrapper>
-
-//   );
-
-// }

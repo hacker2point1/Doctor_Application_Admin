@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store/store";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ import {
   getDepartmentList
 } from "@/redux/slice/doctorCRUDSlice";
 
-import { acceptAppointment, getAppointmentList } from "@/redux/slice/appointmentSlice";
+import { acceptAppointment, getAppointmentList, getAllAcceptedAppoinmentList } from "@/redux/slice/appointmentSlice";
 
 const SIDEBAR_WIDTH = 0;
 
@@ -44,40 +44,50 @@ export default function DashboardPage() {
     (state: RootState) => state.doctor
   );
 
-  const { appointmentList , loading} = useSelector(
+  const { appointmentList , loading, acceptedAppoinmentList} = useSelector(
     (state: RootState) => state.appointment
   );
 
+  const [doctorMap, setDoctorMap] = useState<{ [key: string]: string }>({});
+
+  //doctorName and the paitentName --checked
+useEffect(() => {
+  if (!doctorList) return;
+
+  const newDoctorMap: { [key: string]: string } = {};
+
+  for (let i = 0; i < doctorList.length; i++) {
+    const doctor = doctorList[i];
+
+    const doctorId = doctor._id;
+    const doctorName = doctor.name;
+
+    newDoctorMap[doctorId] = doctorName;
+  }
+
+  setDoctorMap(newDoctorMap);
+}, [doctorList]);
+
+  const getDoctorName = (doctorId: string) =>
+    doctorMap[doctorId] || "Unknown Doctor";
   useEffect(() => {
     dispatch(getDoctorList({ page: 1, limit: 100 }));
     dispatch(getDepartmentList(undefined));
     dispatch(getAppointmentList({}));
-    // dispatch(acceptAppointment(id))
+    dispatch(getAllAcceptedAppoinmentList({}));
+   
     
   }, [dispatch]);
 
-  /* ---------------- LOADING ---------------- */
 
-  // const loading =
-  //   !doctorList?.length &&
-  //   !departmentList?.length &&
-  //   !appointmentList?.length;
-
-  /* ---------------- APPOINTMENT COUNTS ---------------- */
-
+  //total appointments
   const totalAppointments = appointmentList?.length || 0;
 
-  const acceptedAppointments = useMemo(() => {
-    return (
-      appointmentList?.filter(
-        (a: any) => a.status?.toLowerCase() === "accepted"
-      ).length || 0
-    );
-  }, [appointmentList]);
-  console.log(acceptedAppointments)
+  //acccepted appointment 
+  const acceptedAppointments = acceptedAppoinmentList?.length || 0;
 
 
-  /* ---------------- DASHBOARD CARDS ---------------- */
+  /* dashboard cards */
 
   const statCards = [
     {
@@ -264,7 +274,7 @@ export default function DashboardPage() {
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
-                    {appt.doctorName || "Doctor"}
+                    {appt.doctorName || getDoctorName(appt.doctorId)}
                   </Typography>
                 </Box>
 

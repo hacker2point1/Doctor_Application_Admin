@@ -24,6 +24,24 @@ const departmentInitialState: DepartmentState = {
   currentDepartmentId: null,
 };
 
+//  DOCTOR SLICE
+
+interface DoctorState {
+  loading: boolean;
+  error: string | null;
+  departmentList: any[];
+  doctorList: any[];
+  totalDoctor: number;
+}
+
+const doctorInitialState: DoctorState = {
+  loading: false,
+  error: null,
+  departmentList: [],
+  doctorList: [],
+  totalDoctor: 0,
+};
+
 //add department
 export const addDepartment = createAsyncThunk<
   any,
@@ -79,23 +97,7 @@ const departmentSlice = createSlice({
   },
 });
 
-//  DOCTOR SLICE
 
-interface DoctorState {
-  loading: boolean;
-  error: string | null;
-  departmentList: any[];
-  doctorList: any[];
-  totalDoctor: number;
-}
-
-const doctorInitialState: DoctorState = {
-  loading: false,
-  error: null,
-  departmentList: [],
-  doctorList: [],
-  totalDoctor: 0,
-};
 
 
 //create doctor
@@ -241,6 +243,7 @@ const doctorSlice = createSlice({
 
         if (payload?.data) {
           state.doctorList.unshift(payload?.data);
+          state.totalDoctor += 1;
           console.log(payload.data);
         }
       })
@@ -287,7 +290,7 @@ const doctorSlice = createSlice({
 
       .addCase(getDoctorList.fulfilled, (state, { payload }) => {
         state.doctorList = payload.data;
-
+        state.totalDoctor = payload.total || payload.totalDoctor || 0;
         console.log(payload);
         state.loading = false;
       })
@@ -303,8 +306,9 @@ const doctorSlice = createSlice({
       .addCase(deleteDoctor.fulfilled, (state, action) => {
         state.loading = false
         state.doctorList = state.doctorList.filter(
-          (doctor: any) => doctor?.id !== action.meta.arg
+          (doctor: any) => doctor?._id !== action.meta.arg
         )
+        state.totalDoctor -= 1;
 
       })
 

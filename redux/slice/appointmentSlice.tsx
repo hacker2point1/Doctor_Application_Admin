@@ -42,7 +42,7 @@ export const getAppointmentList = createAsyncThunk<any, any>(
   }
 );
 //accepted list
-export const getAllAcceptedAppoinmentList = createAsyncThunk<any, any>(
+export const getAllAcceptedAppoinmentList = createAsyncThunk<Appointment[], void>(
   "getAllAcceptedAppoinmentList",
   async (payload, { rejectWithValue }) => {
     try {
@@ -108,18 +108,18 @@ const appointmentSlice = createSlice({
         state.error = payload as string;
       })
 
-// list of accepted appoinments
-.addCase(getAllAcceptedAppoinmentList.pending, (state) => {
-  state.loading = true;
-})
-.addCase(getAllAcceptedAppoinmentList.fulfilled, (state, { payload }) => {
-  state.acceptedAppoinmentList = Array.isArray(payload) ? payload : payload?.data || [];
-  state.loading = false;
-})
-.addCase(getAllAcceptedAppoinmentList.rejected, (state, { payload }) => {
-  state.loading = false;
-  state.error = payload as string;
-})
+      // list of accepted appoinments
+      .addCase(getAllAcceptedAppoinmentList.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllAcceptedAppoinmentList.fulfilled, (state, { payload }) => {
+        state.acceptedAppoinmentList = Array.isArray(payload) ? payload : payload?.data || [];
+        state.loading = false;
+      })
+      .addCase(getAllAcceptedAppoinmentList.rejected, (state, { payload }) => {
+        state.loading = false;
+        state.error = payload as string;
+      })
       // accept appointment
       .addCase(acceptAppointment.pending, (state) => {
         state.loading = true;
@@ -127,7 +127,7 @@ const appointmentSlice = createSlice({
       .addCase(acceptAppointment.fulfilled, (state, { payload }) => {
         state.loading = false;
 
-        
+
         const appointment = payload?.data ?? payload;
         const id = appointment?._id;
 

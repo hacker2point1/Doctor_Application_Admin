@@ -65,11 +65,11 @@ const DoctorList = () => {
   const limit = 5;
   const SIDEBAR_WIDTH = 280;
 
-  const { doctorList, loading, departmentList } = useSelector(
+  const { doctorList, loading, departmentList, totalDoctor } = useSelector(
     (state: RootState) => state.doctor
   );
 
-  const totalPages = doctorList.length === limit ? page + 1 : page;
+  const totalPages = totalDoctor > 0 ? Math.ceil(totalDoctor / limit) : (doctorList.length === limit ? page + 1 : page);
 
   useEffect(() => {
     dispatch(getDepartmentList()).unwrap();
@@ -432,7 +432,7 @@ return (
 
       </TableContainer>
 
-      {doctorList.length >= limit && (
+      {totalPages > 1 && (
         <Box sx={{ p: 3, display: "flex", justifyContent: "flex-end" }}>
           <Pagination
             count={totalPages}

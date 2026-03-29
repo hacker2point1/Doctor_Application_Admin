@@ -20,15 +20,17 @@ export const useThemeMode = () => useContext(ThemeContext);
 
 export default function ThemeContextProvider({ children }: any) {
 
-  const [mode, setMode] = useState<ThemeMode>("light");
-
-  // Load theme from localStorage on first render
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("app-theme") as ThemeMode | null;
-
-    if (savedTheme) {
-      setMode(savedTheme);
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem("app-theme") as ThemeMode) || "dark";
     }
+    return "dark";
+  });
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   const toggleTheme = () => {
@@ -53,6 +55,10 @@ export default function ThemeContextProvider({ children }: any) {
       }),
     [mode]
   );
+
+  if (!mounted) {
+    return null; // or a loading spinner, but null to avoid flash
+  }
 
   return (
     <ThemeContext.Provider value={{ toggleTheme, mode }}>
