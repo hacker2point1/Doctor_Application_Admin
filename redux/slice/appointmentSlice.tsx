@@ -11,6 +11,8 @@ interface Appointment {
   name: string;
   doctorId: string;
   date: string;
+  time?: string;
+  timeSlot?: string;
   status: string;
 }
 

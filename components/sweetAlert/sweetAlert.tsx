@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-const HandleDelete = ({ handleDelete }) => {
+const HandleDelete = ({ handleDelete:[] }) => {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-success",
@@ -28,7 +28,10 @@ const HandleDelete = ({ handleDelete }) => {
         });
 
        
-        if (handleDelete) handleDelete();
+        if (handleDelete) 
+          {
+            handleDelete();
+          }
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         swalWithBootstrapButtons.fire({
           title: "Cancelled",

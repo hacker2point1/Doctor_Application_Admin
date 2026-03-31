@@ -30,7 +30,7 @@ import {
   getDepartmentList
 } from "@/redux/slice/doctorCRUDSlice";
 
-import { RootState } from "@/redux/store/store";
+import { AppDispatch, RootState } from "@/redux/store/store";
 
 const schema = yup.object().shape({
   name: yup
@@ -49,7 +49,7 @@ interface Props {
 
 const DepartmentFormModal = ({ onClose }: Props) => {
 
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
 
   const accentColor =

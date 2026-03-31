@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store/store";
+import { AppDispatch, RootState } from "@/redux/store/store";
 import { useRouter } from "next/navigation";
 
 import {
@@ -31,12 +31,14 @@ import {
 } from "@/redux/slice/doctorCRUDSlice";
 
 import { acceptAppointment, getAppointmentList, getAllAcceptedAppoinmentList } from "@/redux/slice/appointmentSlice";
+import { useAppDispatch } from "@/redux/appDispatchTypeHook/hooks";
 
-const SIDEBAR_WIDTH = 0;
+const SIDEBAR_WIDTH = 280;
 
 export default function DashboardPage() {
 
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useAppDispatch()
   const router = useRouter();
   const theme = useTheme();
 
@@ -48,24 +50,38 @@ export default function DashboardPage() {
     (state: RootState) => state.appointment
   );
 
-  const [doctorMap, setDoctorMap] = useState<{ [key: string]: string }>({});
+//   const [doctorMap, setDoctorMap] = useState<{ [key: string]: string }>({});
 
-  //doctorName and the paitentName --checked
-useEffect(() => {
-  if (!doctorList) return;
+//   //doctorName and the paitentName --checked
+// useEffect(() => {
+//   if (!doctorList) return;
 
-  const newDoctorMap: { [key: string]: string } = {};
+//   const newDoctorMap: { [key: string]: string } = {};
 
-  for (let i = 0; i < doctorList.length; i++) {
-    const doctor = doctorList[i];
+//   for (let i = 0; i < doctorList.length; i++) {
+//     const doctor = doctorList[i];
 
-    const doctorId = doctor._id;
-    const doctorName = doctor.name;
+//     const doctorId = doctor._id;
+//     const doctorName = doctor.name;
 
-    newDoctorMap[doctorId] = doctorName;
+//     newDoctorMap[doctorId] = doctorName;
+//   }
+
+//   setDoctorMap(newDoctorMap);
+// }, [doctorList]);
+
+
+
+
+
+const doctorMap = useMemo(() => {
+  if (!doctorList) return {};
+
+  const map: { [key: string]: string } = {};
+  for (const doc of doctorList) {
+    map[doc._id] = doc.name;
   }
-
-  setDoctorMap(newDoctorMap);
+  return map;
 }, [doctorList]);
 
   const getDoctorName = (doctorId: string) =>
@@ -74,7 +90,7 @@ useEffect(() => {
     dispatch(getDoctorList({ page: 1, limit: 100 }));
     dispatch(getDepartmentList(undefined));
     dispatch(getAppointmentList({}));
-    dispatch(getAllAcceptedAppoinmentList({}));
+    dispatch(getAllAcceptedAppoinmentList());
    
     
   }, [dispatch]);
@@ -126,9 +142,8 @@ useEffect(() => {
   return (
     <Box
       sx={{
-        ml: `${SIDEBAR_WIDTH}px`,
-        width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
-        p: 4,
+        p: { xs: 2, md: 4 },
+        pt: { xs: "80px", md: 4 },
         minHeight: "100vh",
         bgcolor: "background.default"
       }}

@@ -137,9 +137,14 @@ export const getDepartmentList = createAsyncThunk<any, any>(
     return response.data;
   },
 );
+type DoctorParams={
+page: number,
+limit:number,
+search?:string
 
+}
 //get doctor list
-export const getDoctorList = createAsyncThunk<any, any>(
+export const getDoctorList = createAsyncThunk<any, DoctorParams>(
   "getDoctorList",
   async ({ page, limit, search }, { rejectWithValue }) => {
     try {

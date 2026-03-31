@@ -362,6 +362,33 @@ export default function AcceptedAppoinments() {
   const getDoctorName = (doctorId: string) => {
     return doctorMap[doctorId] || "Unknown Doctor";
   };
+  //date and time formatter
+
+  const formatDateTime = (date: string, time?: string) => {
+    if (!date) return "N/A";
+    
+    try {
+      const dateObj = new Date(date);
+      const formattedDate = dateObj.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+
+      if (time && time !== "00:00:000" && time !== "00:00:00") {
+        return `${formattedDate} ${time}`;
+      }
+
+      const timeFromDate = dateObj.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      return `${formattedDate} ${timeFromDate}`;
+    } catch (error) {
+      return date;
+    }
+  };
 
   const filteredAppointments = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -431,7 +458,7 @@ export default function AcceptedAppoinments() {
 
   if (loading) {
     return (
-      <Box sx={{ ml: `${SIDEBAR_WIDTH}px`, p: 4 }}>
+      <Box sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` }, width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` }, p: { xs: 2, md: 4 } }}>
         <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
           Accepted Appointments
         </Typography>
@@ -459,7 +486,7 @@ export default function AcceptedAppoinments() {
 
   if (fetchError) {
     return (
-      <Box sx={{ ml: `${SIDEBAR_WIDTH}px`, p: 4 }}>
+      <Box sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` }, width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` }, p: { xs: 2, md: 4 } }}>
         <Card sx={{ p: 6 }}>
           <Stack alignItems="center" spacing={2}>
             <EventBusyIcon sx={{ fontSize: 70, color: "#9e9e9e" }} />
@@ -475,7 +502,7 @@ export default function AcceptedAppoinments() {
 
   if (!hasAcceptedAppointments && !search) {
     return (
-      <Box sx={{ ml: `${SIDEBAR_WIDTH}px`, p: 4 }}>
+      <Box sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` }, width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` }, p: { xs: 2, md: 4 } }}>
         <Card sx={{ p: 6 }}>
           <Stack alignItems="center" spacing={2}>
             <EventBusyIcon sx={{ fontSize: 70, color: "#9e9e9e" }} />
@@ -487,7 +514,7 @@ export default function AcceptedAppoinments() {
   }
 
   return (
-    <Box sx={{ ml: `${SIDEBAR_WIDTH}px`, p: 4 }}>
+    <Box sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` }, width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` }, p: { xs: 2, md: 4 } }}>
 
       <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
         Accepted Appointments ({filteredAppointments.length})
@@ -541,7 +568,7 @@ export default function AcceptedAppoinments() {
                 <TableRow key={appt._id}>
                   <TableCell>{appt.name}</TableCell>
                   <TableCell>{getDoctorName(appt.doctorId)}</TableCell>
-                  <TableCell>{appt.date}</TableCell>
+                  <TableCell>{formatDateTime(appt.date, appt.time || appt.timeSlot)}</TableCell>
                   <TableCell>{renderStatusChip(appt.status)}</TableCell>
                 </TableRow>
               ))

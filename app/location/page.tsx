@@ -43,7 +43,7 @@ export default function AddCenterForm() {
       alignItems="center"
       minHeight="100vh"
       px={2}
-      sx={{ ml: `${SIDEBAR_WIDTH}px` }}
+      sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` } }}
     >
       <Paper
         elevation={0}

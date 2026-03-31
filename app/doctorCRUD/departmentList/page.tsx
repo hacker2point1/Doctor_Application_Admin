@@ -122,8 +122,9 @@ export default function DepartmentList() {
 
     <Box
       sx={{
-        ml: `${SIDEBAR_WIDTH}px`,
-        p: 4,
+        ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` },
+        width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
+        p: { xs: 2, md: 4 },
         minHeight: "100vh",
         bgcolor: "background.default"
       }}

@@ -80,6 +80,32 @@ export default function AppointmentList() {
 
   const getDoctorName = (doctorId: string) =>
     doctorMap[doctorId] || "Unknown Doctor";
+//date and time formate
+  const formatDateTime = (date: string, time?: string) => {
+    if (!date) return "N/A";
+    
+    try {
+      const dateObj = new Date(date);
+      const formattedDate = dateObj.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+
+      if (time && time !== "00:00:000" && time !== "00:00:00") {
+        return `${formattedDate} ${time}`;
+      }
+
+      const timeFromDate = dateObj.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      return `${formattedDate} ${timeFromDate}`;
+    } catch (error) {
+      return date;
+    }
+  };
 
   const filteredAppointments = useMemo(() => {
     let data = appointmentList || [];
@@ -154,7 +180,7 @@ export default function AppointmentList() {
 
   if (loading) {
     return (
-      <Box sx={{ ml: `${SIDEBAR_WIDTH}px`, p: 4 }}>
+      <Box sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` }, p: 4 }}>
         <Card sx={{ p: 3 }}>
           <Typography variant="h6" fontWeight={700} mb={2}>
             Appointment Requests
@@ -169,7 +195,7 @@ export default function AppointmentList() {
 
   if (!appointmentList?.length) {
     return (
-      <Box sx={{ ml: `${SIDEBAR_WIDTH}px`, p: 4 }}>
+      <Box sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` }, p: 4 }}>
         <Card sx={{ p: 6 }}>
           <Stack alignItems="center">
             <EventBusyIcon sx={{ fontSize: 60, color: "#aaa" }} />
@@ -181,13 +207,13 @@ export default function AppointmentList() {
   }
 
   return (
-    <Box sx={{ ml: `${SIDEBAR_WIDTH}px`, p: 4 }}>
+    <Box sx={{ ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` }, p: 4 }}>
       <Card sx={{ p: 3 }}>
         <Typography variant="h6" fontWeight={700} mb={2}>
           Appointment Requests
         </Typography>
 
-        {/* 🔥 MODERN SEARCH BAR */}
+        {/* search bar*/}
         <Stack direction="row" spacing={2} mb={3}>
           <TextField
             fullWidth
@@ -275,7 +301,7 @@ export default function AppointmentList() {
                 <TableRow key={appt._id} hover>
                   <TableCell>{appt.name}</TableCell>
                   <TableCell>{getDoctorName(appt.doctorId)}</TableCell>
-                  <TableCell>{appt.date}</TableCell>
+                  <TableCell>{formatDateTime(appt.date, appt.time || appt.timeSlot)}</TableCell>
 
                   <TableCell>
                     <Chip
